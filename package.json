@@ -9,6 +9,9 @@
     "dev": "node unified-server.js"
   },
   "dependencies": {
+    "@capacitor/android": "^7.4.3",
+    "@capacitor/cli": "^7.4.3",
+    "@capacitor/core": "^7.4.3",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -30,6 +33,7 @@
   "license": "MIT",
   "devDependencies": {
     "eslint": "^9.36.0",
+    "gh-pages": "^6.3.0",
     "prettier": "^3.6.2"
   }
 }

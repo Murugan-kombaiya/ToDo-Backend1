@@ -1,0 +1,6 @@
+{
+  "appId": "com.Myapp.myapp",
+  "appName": "MyApp",
+  "webDir": "../ToDo-frontend/frontend/build",
+  "bundledWebRuntime": false
+}
