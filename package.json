@@ -1,0 +1,35 @@
+{
+  "name": "unified-todo-app",
+  "version": "1.0.0",
+  "description": "Unified Todo Application with Frontend and Backend",
+  "main": "unified-server.js",
+  "scripts": {
+    "start": "node unified-server.js",
+    "server": "node unified-server.js",
+    "dev": "node unified-server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2",
+    "pg": "^8.16.3",
+    "socket.io": "^4.8.1"
+  },
+  "keywords": [
+    "todo",
+    "task",
+    "learning",
+    "progress",
+    "tracker",
+    "unified"
+  ],
+  "author": "Hayatt",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^9.36.0",
+    "prettier": "^3.6.2"
+  }
+}
