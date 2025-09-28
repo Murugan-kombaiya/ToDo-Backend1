@@ -11,26 +11,30 @@ const https = require("https");
 
 const app = express();
 
-// Configure CORS for development
+// Configure CORS
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
 
-    // Allow localhost and common development ports
-    const allowedOrigins = [
+    // Allow localhost and common development ports in development
+    const allowedOrigins = isDevelopment ? [
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:5000',
       'http://127.0.0.1:3000',
       'http://127.0.0.1:3001',
       'http://127.0.0.1:5000'
+    ] : [
+      process.env.FRONTEND_URL || 'https://yourdomain.com'
     ];
 
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(null, true); // Allow all for development
+      callback(new Error(`Origin ${origin} not allowed by CORS policy`), false);
     }
   },
   credentials: true,
@@ -42,21 +46,57 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Serve static files from React build
-app.use(express.static(path.join(__dirname, 'ToDo-frontend/frontend/build')));
+app.use(express.static(path.join(__dirname, '../ToDo-frontend/frontend/build')));
 
 // Add OPTIONS handler for preflight requests
 app.options('*', cors());
 
 // PostgreSQL Connection
 const pool = new Pool({
-  user: process.env.PGUSER || "Hayatt",
+  user: process.env.PGUSER,
   host: process.env.PGHOST || "localhost",
-  database: process.env.PGDATABASE || "todo_demo",
-  password: String(process.env.PGPASSWORD ?? "murugan@2806"),
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
   port: Number(process.env.PGPORT || 5432),
+  max: 200,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || "406fa30a9db3a62b4be08fd5c7456eb2144f1bd807f36355db79afa9edc24a0c";
+// Validate required environment variables
+if (!process.env.PGUSER || !process.env.PGDATABASE || !process.env.PGPASSWORD) {
+  console.error('❌ Missing required environment variables: PGUSER, PGDATABASE, PGPASSWORD');
+  console.error('Please check your .env file');
+  process.exit(1);
+}
+
+// Database connection error handling
+pool.on('error', (err, client) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1);
+});
+
+// Test database connection on startup
+async function testDbConnection() {
+  try {
+    const client = await pool.connect();
+    console.log('✅ Database connected successfully');
+    client.release();
+  } catch (err) {
+    console.error('❌ Database connection failed:', err.message);
+    console.error('Please ensure PostgreSQL is running and credentials are correct');
+  }
+}
+
+testDbConnection();
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  console.error('❌ Missing required environment variable: JWT_SECRET');
+  console.error('Please add JWT_SECRET to your .env file');
+  process.exit(1);
+}
 
 
 // Create HTTP server and Socket.IO
