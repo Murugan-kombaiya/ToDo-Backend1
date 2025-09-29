@@ -26,7 +26,16 @@ app.use(cors({
       'http://localhost:5000',
       'http://127.0.0.1:3000',
       'http://127.0.0.1:3001',
-      'http://127.0.0.1:5000'
+      'http://127.0.0.1:5000',
+      'http://192.168.1.2:3000',
+      'http://192.168.1.2:3001',
+      'http://192.168.1.2:3003',
+      'http://10.0.2.2:3000',
+      'http://10.0.2.2:3001',
+      'http://10.0.2.2:3003',
+      'capacitor://localhost',
+      'http://localhost',
+      'https://localhost'
     ] : [
       process.env.FRONTEND_URL || 'https://yourdomain.com'
     ];
@@ -1499,8 +1508,9 @@ app.use('/api/*', (req, res) => {
 
 // Start server
 const PORT = Number(process.env.PORT || 3001);
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`🎉 TASKFLOW PRO RUNNING ON http://localhost:${PORT}`);
+  console.log(`📱 Mobile Access: http://192.168.1.2:${PORT}`);
   console.log(`🏠 Frontend: http://localhost:${PORT}/`);
   console.log(`🔧 API: http://localhost:${PORT}/api/...`);
   console.log(`🏥 Health: http://localhost:${PORT}/test-db`);

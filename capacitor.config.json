@@ -1,6 +1,18 @@
 {
-  "appId": "com.Myapp.myapp",
-  "appName": "MyApp",
+  "appId": "com.taskflow.todoapp",
+  "appName": "TaskFlow Pro",
   "webDir": "../ToDo-frontend/frontend/build",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "server": {
+    "allowNavigation": [
+      "http://10.0.2.2:3001",
+      "http://192.168.1.2:3001",
+      "http://localhost:3001",
+      "https://TaskFlowPro.onrender.com"
+    ]
+  },
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true
+  }
 }
