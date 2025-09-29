@@ -5,7 +5,7 @@ const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
 require("dotenv").config();
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const https = require("https");
 
@@ -55,7 +55,7 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Serve static files from React build
-app.use(express.static(path.join(__dirname, '../ToDo-frontend/frontend/build')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Add OPTIONS handler for preflight requests
 app.options('*', cors());
@@ -356,7 +356,7 @@ function authRequired(req, res, next) {
 
 // Serve the React frontend at root
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "ToDo-frontend/frontend/build/index.html"));
+  res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
 // Auth endpoints
@@ -1498,7 +1498,7 @@ app.post("/admin/create-demo-user", async (req, res) => {
 
 // Catch-all handler for React Router (SPA)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'ToDo-frontend/frontend/build/index.html'));
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 // 404 handler for API routes
