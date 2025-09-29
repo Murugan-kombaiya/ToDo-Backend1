@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node unified-server.js",
     "server": "node unified-server.js",
-    "dev": "node unified-server.js"
+    "dev": "node unified-server.js",
+    "build": "npm rebuild bcrypt --build-from-source",
+    "postinstall": "npm rebuild bcrypt --build-from-source"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.3",
@@ -35,5 +37,9 @@
     "eslint": "^9.36.0",
     "gh-pages": "^6.3.0",
     "prettier": "^3.6.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }
