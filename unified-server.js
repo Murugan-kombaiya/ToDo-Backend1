@@ -14,38 +14,9 @@ const app = express();
 // Configure CORS
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
+// Simple CORS - allow all origins for development/testing
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-
-    // Allow localhost and common development ports in development
-    const allowedOrigins = isDevelopment ? [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:5000',
-      'http://127.0.0.1:3000',
-      'http://127.0.0.1:3001',
-      'http://127.0.0.1:5000',
-      'http://192.168.1.2:3000',
-      'http://192.168.1.2:3001',
-      'http://192.168.1.2:3003',
-      'http://10.0.2.2:3000',
-      'http://10.0.2.2:3001',
-      'http://10.0.2.2:3003',
-      'capacitor://localhost',
-      'http://localhost',
-      'https://localhost'
-    ] : [
-      process.env.FRONTEND_URL || 'https://yourdomain.com'
-    ];
-
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error(`Origin ${origin} not allowed by CORS policy`), false);
-    }
-  },
+  origin: "*",
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -114,7 +85,10 @@ const io = new Server(server, {
   cors: {
     origin: "*",
     credentials: true,
+    methods: ["GET", "POST"]
   },
+  transports: ['polling', 'websocket'],
+  allowEIO3: true
 });
 
 io.on("connection", (socket) => {
@@ -1027,6 +1001,19 @@ app.get("/test-db", async (req, res) => {
       error: error.message
     });
   }
+});
+
+// Simple network test endpoint for Android debugging
+app.get("/test-network", (req, res) => {
+  const clientIP = req.ip || req.connection.remoteAddress;
+  console.log(`📱 Network test request from: ${clientIP}`);
+  res.json({
+    success: true,
+    message: "Network connection successful!",
+    server: "http://192.168.1.2:3001",
+    clientIP: clientIP,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // Global error handler middleware

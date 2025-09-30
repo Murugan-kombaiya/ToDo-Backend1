@@ -4,17 +4,16 @@
 	"webDir": "../ToDo-frontend/frontend/build",
 	"bundledWebRuntime": false,
 	"server": {
-		"url": "https://TaskFlowPro.onrender.com",
 		"cleartext": true,
 		"allowNavigation": [
 			"http://10.0.2.2:3001",
 			"http://192.168.1.2:3001",
-			"http://localhost:3001",
-			"https://TaskFlowPro.onrender.com"
+			"http://localhost:3001"
 		]
 	},
 	"android": {
 		"allowMixedContent": true,
-		"captureInput": true
+		"captureInput": true,
+		"useCleartextTraffic": true
 	}
 }
