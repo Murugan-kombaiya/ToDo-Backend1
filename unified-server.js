@@ -431,17 +431,17 @@ app.post("/auth/change-password", authRequired, async (req, res) => {
 });
 
 // Task endpoints
-app.get("/tasks", authOptional, async (req, res) => {
+app.get("/tasks", authRequired, async (req, res) => {
   try {
+    console.log(`📋 GET /tasks called by user: ${req.user.username} (ID: ${req.user.id})`);
     const { status, priority, category, type, project_id, important, q, sort = 'id', order = 'asc' } = req.query;
     const where = [];
     const values = [];
     let idx = 1;
 
-    if (req.user) {
-      where.push(`user_id = $${idx++}`);
-      values.push(req.user.id);
-    }
+    // Always filter by user ID since auth is required
+    where.push(`user_id = $${idx++}`);
+    values.push(req.user.id);
 
     if (status) {
       where.push(`status = $${idx++}`);
@@ -482,7 +482,9 @@ app.get("/tasks", authOptional, async (req, res) => {
     const sortOrder = String(order).toLowerCase() === "desc" ? "DESC" : "ASC";
 
     const query = `SELECT * FROM tasks ${where.length ? "WHERE " + where.join(" AND ") : ""} ORDER BY ${sortBy} ${sortOrder}`;
+    console.log(`🔍 Query: ${query}, Values: [${values.join(', ')}]`);
     const result = await pool.query(query, values);
+    console.log(`📊 Found ${result.rows.length} tasks for user ${req.user.id}`);
     res.json(result.rows);
   } catch (err) {
     console.error("GET /tasks error:", err);
@@ -492,6 +494,9 @@ app.get("/tasks", authOptional, async (req, res) => {
 
 app.post("/tasks", authRequired, async (req, res) => {
   try {
+    console.log(`✅ POST /tasks called by user: ${req.user.username} (ID: ${req.user.id})`);
+    console.log(`📝 Task data:`, req.body);
+
     const { title, status, description, priority, due_date, due_time, category, type, project_id, important, assigned_to } = req.body;
     if (!title || !title.trim()) {
       return res.status(400).json({ error: "Title is required" });
@@ -509,6 +514,7 @@ app.post("/tasks", authRequired, async (req, res) => {
     );
 
     const task = result.rows[0];
+    console.log(`💾 Task created successfully:`, task);
     io.to(`user-${req.user.id}`).emit("task_created", task);
     res.json(task);
   } catch (err) {
