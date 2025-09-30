@@ -1170,6 +1170,7 @@ app.get("/dashboard/overview", authRequired, async (req, res) => {
   try {
     const userId = req.user.id;
     const today = new Date().toISOString().split('T')[0];
+    console.log(`Dashboard request for user ${userId} on ${today}`);
 
     // Get today's tasks with new workflow statuses
     const tasksToday = await pool.query(
@@ -1254,8 +1255,12 @@ app.get("/dashboard/overview", authRequired, async (req, res) => {
       }
     });
   } catch (error) {
-    console.error("Dashboard overview error:", error);
-    res.status(500).json({ error: "Failed to fetch dashboard data" });
+    console.error("Dashboard overview error:", error.message);
+    console.error("Full error:", error);
+    res.status(500).json({
+      error: "Failed to fetch dashboard data",
+      details: error.message
+    });
   }
 });
 
