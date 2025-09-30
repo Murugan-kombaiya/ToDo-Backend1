@@ -32,21 +32,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.options('*', cors());
 
 // PostgreSQL Connection
-const pool = new Pool({
-  user: process.env.PGUSER,
-  host: process.env.PGHOST || "localhost",
-  database: process.env.PGDATABASE,
-  password: process.env.PGPASSWORD,
-  port: Number(process.env.PGPORT || 5432),
-  max: 200,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+const pool = new Pool(
+  process.env.DATABASE_URL
+    ? { connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } }
+    : {
+        user: process.env.PGUSER,
+        host: process.env.PGHOST || "localhost",
+        database: process.env.PGDATABASE,
+        password: process.env.PGPASSWORD,
+        port: Number(process.env.PGPORT || 5432),
+        max: 200,
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 2000,
+      }
+);
 
 // Validate required environment variables
-if (!process.env.PGUSER || !process.env.PGDATABASE || !process.env.PGPASSWORD) {
-  console.error('❌ Missing required environment variables: PGUSER, PGDATABASE, PGPASSWORD');
-  console.error('Please check your .env file');
+if (!process.env.DATABASE_URL && (!process.env.PGUSER || !process.env.PGDATABASE || !process.env.PGPASSWORD)) {
+  console.error('❌ Missing required environment variables: DATABASE_URL or (PGUSER, PGDATABASE, PGPASSWORD)');
+  console.error('Please check your environment variables');
   process.exit(1);
 }
 
